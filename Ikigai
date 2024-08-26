@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Busca a tu Novia</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+        #gameCanvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ajustar el tamaño del canvas al tamaño de la pantalla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Variables del juego
+        let stickman = { x: 50, y: canvas.height - 50, width: 20, height: 40, speed: 5 };
+        let girls = [
+            { x: canvas.width * 0.3, y: canvas.height - 60, width: 30, height: 50 },
+            { x: canvas.width * 0.6, y: canvas.height - 60, width: 30, height: 50 },
+            { x: canvas.width * 0.9, y: canvas.height - 60, width: 30, height: 50 }
+        ];
+        let obstacles = [];
+        let gameOver = false;
+        let girlfriend = Math.floor(Math.random() * 3);
+
+        // Generar obstáculos
+        function generateObstacles() {
+            for (let i = 0; i < 5; i++) {
+                obstacles.push({
+                    x: Math.random() * (canvas.width - 30) + 30,
+                    y: Math.random() * (canvas.height - 100),
+                    width: 30,
+                    height: 30
+                });
+            }
+        }
+        generateObstacles();
+
+        // Dibujar el juego
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar stickman
+            ctx.fillStyle = 'black';
+            ctx.fillRect(stickman.x, stickman.y, stickman.width, stickman.height);
+
+            // Dibujar chicas
+            girls.forEach((girl, index) => {
+                ctx.fillStyle = 'pink';
+                ctx.fillRect(girl.x, girl.y, girl.width, girl.height);
+                
+                if (gameOver) {
+                    ctx.fillStyle = 'red';
+                    ctx.font = '30px Arial';
+                    if (index === girlfriend) {
+                        ctx.fillText('❤️', girl.x + 5, girl.y - 10);
+                    } else {
+                        ctx.fillText('❌', girl.x + 5, girl.y - 10);
+                    }
+                }
+            });
+
+            // Dibujar obstáculos
+            ctx.fillStyle = 'red';
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+
+            // Mostrar mensaje de fin de juego
+            if (gameOver) {
+                ctx.fillStyle =
